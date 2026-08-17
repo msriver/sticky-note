@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="420" viewBox="0 0 520 420">
+  <defs>
+    <filter id="popShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000000" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <rect width="520" height="420" fill="#eef0f3"/>
+
+  <g filter="url(#popShadow)">
+    <rect x="120" y="30" width="280" height="300" rx="14" fill="#ffffff"/>
+  </g>
+
+  <!-- toggle row -->
+  <text x="150" y="80" font-family="'Segoe UI', 'Apple SD Gothic Neo', sans-serif" font-size="16" font-weight="700" fill="#2c2c2c">스티키 노트 사용</text>
+  <rect x="330" y="65" width="38" height="22" rx="11" fill="#f7b500"/>
+  <circle cx="352" cy="76" r="8" fill="#ffffff"/>
+
+  <!-- status -->
+  <text x="150" y="112" font-family="'Segoe UI', sans-serif" font-size="12" fill="#6b6b6b">이 페이지의 메모: 3개</text>
+
+  <!-- primary button -->
+  <rect x="150" y="132" width="220" height="38" rx="7" fill="#fff6a9" stroke="#e8dd7f"/>
+  <text x="260" y="156" text-anchor="middle" font-family="'Segoe UI', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="700" fill="#2c2c2c">+ 이 페이지에 메모 추가</text>
+
+  <!-- secondary button -->
+  <rect x="150" y="180" width="220" height="38" rx="7" fill="#ffffff" stroke="#d8d8d8"/>
+  <text x="260" y="204" text-anchor="middle" font-family="'Segoe UI', 'Apple SD Gothic Neo', sans-serif" font-size="13" fill="#2c2c2c">이 페이지 메모 모두 삭제</text>
+
+  <!-- hint -->
+  <text x="150" y="246" font-family="'Segoe UI', sans-serif" font-size="11" fill="#8a8a8a">
+    <tspan x="150" dy="0">페이지에서 마우스 오른쪽 버튼을 클릭한 후</tspan>
+    <tspan x="150" dy="16">"여기에 스티키 노트 추가"를 선택해도</tspan>
+    <tspan x="150" dy="16">메모를 추가할 수 있어요.</tspan>
+  </text>
+</svg>
