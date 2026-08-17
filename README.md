@@ -9,7 +9,7 @@
 <p align="center">
   <img alt="Manifest V3" src="https://img.shields.io/badge/Manifest-V3-4285F4?style=flat-square&logo=googlechrome&logoColor=white" />
   <img alt="No build step" src="https://img.shields.io/badge/build-none%20needed-brightgreen?style=flat-square" />
-  <img alt="License" src="https://img.shields.io/badge/license-Personal%20Project-lightgrey?style=flat-square" />
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" /></a>
 </p>
 
 ---
@@ -83,6 +83,10 @@ sticky-note/
 ```
 
 페이지 키는 `origin + pathname + search`로 만들어지며, 해시(`#...`)는 포함되지 않습니다.
+
+## 📄 License
+
+[MIT](LICENSE)
 
 ---
 
