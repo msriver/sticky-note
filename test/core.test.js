@@ -94,18 +94,3 @@ test("createNote is always a valid, saveable note", () => {
   assert.equal(note.w, Core.DEFAULT_WIDTH);
   assert.ok(note.id.length > 1);
 });
-
-test("legacy storage is split into one key per page", () => {
-  const migrated = Core.migrateLegacyNotes({
-    "https://a.com/1": [{ id: "a", text: "one" }],
-    "https://a.com/2": [{ id: "b", text: "two" }],
-    "https://a.com/3": [],
-    "https://a.com/4": "garbage",
-  });
-  assert.deepEqual(Object.keys(migrated).sort(), [
-    Core.storageKey("https://a.com/1"),
-    Core.storageKey("https://a.com/2"),
-  ].sort());
-  assert.equal(migrated[Core.storageKey("https://a.com/1")][0].text, "one");
-  assert.deepEqual(Core.migrateLegacyNotes(undefined), {});
-});

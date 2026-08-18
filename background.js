@@ -1,5 +1,3 @@
-importScripts("stn-core.js");
-
 const MENU_ADD_NOTE = "stn-add-note";
 
 function createMenu() {
@@ -22,24 +20,18 @@ function createMenu() {
   });
 }
 
-/** Moves the pre-1.1 single `notes` object onto one storage key per page. */
-async function migrateStorage() {
+async function initDefaults() {
   try {
-    const data = await chrome.storage.local.get(["notes", "enabled"]);
+    const data = await chrome.storage.local.get("enabled");
     if (data.enabled === undefined) await chrome.storage.local.set({ enabled: true });
-    if (!data.notes || typeof data.notes !== "object") return;
-
-    const migrated = STNCore.migrateLegacyNotes(data.notes);
-    if (Object.keys(migrated).length) await chrome.storage.local.set(migrated);
-    await chrome.storage.local.remove("notes");
   } catch (error) {
-    console.warn("[Sticky Notes] storage migration failed", error);
+    console.warn("[Sticky Notes] could not initialise settings", error);
   }
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
   createMenu();
-  await migrateStorage();
+  await initDefaults();
 });
 
 chrome.runtime.onStartup.addListener(createMenu);

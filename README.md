@@ -78,7 +78,7 @@ sticky-note/
 ├── stn-core.js           # 순수 로직 (페이지 키·정규화·검증·클램프) — 테스트 대상
 ├── styles.js             # Shadow DOM 안에 주입되는 노트 스타일
 ├── content.js            # 노트 렌더링 · 드래그 · 리사이즈 · 저장 · SPA 추적
-├── background.js         # 우클릭 메뉴, 저장소 마이그레이션
+├── background.js         # 우클릭 메뉴, 기본 설정 초기화
 ├── popup.html/js/css     # 툴바 팝업 UI
 ├── _locales/{en,ko}/     # 번역 메시지
 ├── test/                 # node:test 단위 테스트 (의존성 없음)
@@ -103,7 +103,6 @@ sticky-note/
 
 - 페이지 키는 `origin + pathname + search`로 만들어지며, 해시(`#...`)는 포함되지 않습니다.
 - `z`는 노트 개수 범위(`1..n`) 안에서 저장·정규화됩니다.
-- 1.0.x에서 쓰던 단일 `notes` 객체는 업데이트 시 자동으로 위 형태로 이전됩니다.
 
 ## 🧪 개발
 
@@ -115,7 +114,7 @@ npm test           # 위와 동일
 npm run check      # 모든 스크립트 문법 검사
 ```
 
-`stn-core.js`에는 DOM과 `chrome.*`에 의존하지 않는 순수 로직만 들어 있어 그대로 Node에서 테스트됩니다. 컨텐트 스크립트와 서비스 워커는 이 모듈을 각각 `content_scripts`와 `importScripts`로 불러 씁니다. GitHub Actions(`.github/workflows/ci.yml`)에서 문법 검사 · JSON 검증 · 테스트가 실행됩니다.
+`stn-core.js`에는 DOM과 `chrome.*`에 의존하지 않는 순수 로직만 들어 있어 그대로 Node에서 테스트됩니다. 컨텐트 스크립트는 이 모듈을 `content_scripts`로 불러 씁니다. GitHub Actions(`.github/workflows/ci.yml`)에서 문법 검사 · JSON 검증 · 테스트가 실행됩니다.
 
 ## 📄 License
 

@@ -158,17 +158,6 @@
     return true;
   }
 
-  /** Pre-1.1 storage kept every page inside a single `notes` object. */
-  function migrateLegacyNotes(legacy) {
-    const out = {};
-    if (!legacy || typeof legacy !== "object") return out;
-    for (const [key, value] of Object.entries(legacy)) {
-      const notes = sanitizeNotes(value);
-      if (notes.length) out[storageKey(key)] = notes.map(serializeNote);
-    }
-    return out;
-  }
-
   return {
     COLORS,
     DEFAULT_WIDTH,
@@ -191,6 +180,5 @@
     clampSize,
     clampRange,
     sameNotes,
-    migrateLegacyNotes,
   };
 });

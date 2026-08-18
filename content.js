@@ -30,11 +30,8 @@
   async function readNotes(key) {
     const sKey = Core.storageKey(key);
     try {
-      const data = await chrome.storage.local.get([sKey, "notes"]);
-      if (Array.isArray(data[sKey])) return Core.sanitizeNotes(data[sKey]);
-      // Pre-1.1 layout, in case the service worker migration has not run yet.
-      const legacy = data.notes && data.notes[key];
-      return Core.sanitizeNotes(legacy);
+      const data = await chrome.storage.local.get(sKey);
+      return Core.sanitizeNotes(data[sKey]);
     } catch (error) {
       console.warn("[Sticky Notes] load failed", error);
       return [];
@@ -79,8 +76,13 @@
 
   // ------------------------------------------------------------------- host
 
+  /**
+   * Creates the host if it is missing. Returns true when a *fresh* (and
+   * therefore empty) host was built, which means the caller still has to fill
+   * the layer. Never call this on its own -- use ensureRendered().
+   */
   function ensureHost() {
-    if (host && host.isConnected) return;
+    if (host && host.isConnected) return false;
 
     host = document.createElement("div");
     host.id = "sticky-notes-for-web";
@@ -124,10 +126,16 @@
     // Anchored to <html>, not <body>: absolute children then resolve against the
     // initial containing block, immune to body margins and transforms.
     (document.documentElement || document.body).appendChild(host);
+    return true;
+  }
+
+  /** Guarantees a host that actually contains the current notes. */
+  function ensureRendered() {
+    if (ensureHost()) renderNotes();
   }
 
   function showToast(message) {
-    ensureHost();
+    ensureRendered();
     toastEl.textContent = message;
     toastEl.hidden = false;
     clearTimeout(toastTimer);
@@ -136,13 +144,29 @@
     }, TOAST_MS);
   }
 
+  /**
+   * The document's own size, excluding the notes themselves.
+   *
+   * Notes are absolutely positioned descendants of <html>, so they count towards
+   * documentElement.scrollWidth/Height. Measuring naively would feed each drag a
+   * limit that already contains the note being dragged, and the clamp would
+   * ratchet outwards instead of holding. Hiding the host for the measurement is
+   * the only way to get the page's real extent back (body.scrollWidth does not
+   * work: it misses the page's own absolutely positioned content).
+   *
+   * Must not be called while a pointer is captured -- display:none releases the
+   * capture and fires pointercancel, which would abort the drag.
+   */
   function docBounds() {
     const de = document.documentElement;
-    const body = document.body;
-    return {
-      w: Math.max(de.scrollWidth, de.clientWidth, body ? body.scrollWidth : 0, window.innerWidth || 0),
-      h: Math.max(de.scrollHeight, de.clientHeight, body ? body.scrollHeight : 0, window.innerHeight || 0),
+    const connected = !!(host && host.isConnected);
+    if (connected) host.style.setProperty("display", "none", "important");
+    const bounds = {
+      w: Math.max(de.clientWidth, de.scrollWidth, window.innerWidth || 0),
+      h: Math.max(de.clientHeight, de.scrollHeight, window.innerHeight || 0),
     };
+    if (connected) host.style.setProperty("display", "block", "important");
+    return bounds;
   }
 
   // ----------------------------------------------------------------- render
@@ -291,6 +315,9 @@
       if (event.button !== 0 || pointerId !== null) return;
       if (event.target.closest(".stn-delete, .stn-color-dot")) return;
       event.preventDefault();
+      // Measure before capturing: docBounds() hides the host, which would
+      // release an already-established pointer capture.
+      bounds = docBounds();
       pointerId = event.pointerId;
       handle.setPointerCapture(pointerId);
       startInteraction();
@@ -302,7 +329,6 @@
       // offsetParent's padding box and jumps when the page styles <body>.
       startLeft = note.x;
       startTop = note.y;
-      bounds = docBounds();
       handle.addEventListener("pointermove", onMove);
       handle.addEventListener("pointerup", onEnd);
       handle.addEventListener("pointercancel", onEnd);
@@ -348,6 +374,8 @@
       if (event.button !== 0 || pointerId !== null) return;
       event.preventDefault();
       event.stopPropagation();
+      // See attachDrag: measure before the capture exists.
+      bounds = docBounds();
       pointerId = event.pointerId;
       handle.setPointerCapture(pointerId);
       startInteraction();
@@ -357,7 +385,6 @@
       startY = event.clientY;
       startW = note.w;
       startH = note.h;
-      bounds = docBounds();
       handle.addEventListener("pointermove", onMove);
       handle.addEventListener("pointerup", onEnd);
       handle.addEventListener("pointercancel", onEnd);
@@ -386,12 +413,17 @@
     scheduleSave();
   }
 
-  function renderAll() {
-    ensureHost();
+  /** Fills the layer. Assumes the host exists. */
+  function renderNotes() {
     layer.replaceChildren();
     if (!enabled) return;
     Core.normalizeZ(notes);
     for (const note of notes) layer.appendChild(createNoteElement(note));
+  }
+
+  function renderAll() {
+    ensureHost();
+    renderNotes();
   }
 
   function addNote(position) {
@@ -409,7 +441,7 @@
     const note = Core.createNote({ x: spot.x, y: spot.y, z: Core.maxZ(notes) + 1 });
     notes.push(note);
     Core.normalizeZ(notes);
-    ensureHost();
+    ensureRendered();
     const el = createNoteElement(note);
     layer.appendChild(el);
     applyZ();
@@ -422,7 +454,7 @@
   async function handleNavigation() {
     const nextKey = Core.pageKeyFromUrl(location.href);
     if (nextKey === pageKey) {
-      ensureHost();
+      ensureRendered();
       return;
     }
     // Persist under the key the notes actually belong to before switching.
@@ -451,9 +483,7 @@
   function observeHost() {
     const root = document.documentElement;
     if (!root) return;
-    new MutationObserver(() => {
-      if (!host || !host.isConnected) renderAll();
-    }).observe(root, { childList: true });
+    new MutationObserver(ensureRendered).observe(root, { childList: true });
   }
 
   // --------------------------------------------------------------- messaging
