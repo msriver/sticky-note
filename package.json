@@ -1,7 +1,7 @@
 {
-  "name": "sticky-notes-for-web",
+  "name": "pagepin",
   "version": "1.1.0",
-  "description": "Chrome extension that sticks post-it notes onto web pages.",
+  "description": "Chrome extension that pins notes onto web pages.",
   "private": true,
   "license": "MIT",
   "scripts": {

@@ -41,7 +41,7 @@
     <rect x="80" y="376" width="480" height="12" rx="4" fill="#c9c9c9"/>
   </g>
 
-  <!-- sticky note 1 (yellow) -->
+  <!-- note 1 (yellow) -->
   <g filter="url(#cardShadow)" transform="rotate(-3 300 480)">
     <rect x="200" y="410" width="220" height="150" rx="6" fill="#fff6a9"/>
   </g>
@@ -56,7 +56,7 @@
     <path d="M406 546 L416 546 L416 536" stroke="#00000066" stroke-width="2" fill="none"/>
   </g>
 
-  <!-- sticky note 2 (pink) -->
+  <!-- note 2 (pink) -->
   <g filter="url(#cardShadow)" transform="rotate(4 690 250)">
     <rect x="600" y="180" width="180" height="130" rx="6" fill="#ffd6e8"/>
   </g>
@@ -69,7 +69,7 @@
     <text x="614" y="248" font-family="'Segoe UI', sans-serif" font-size="14" fill="#3a3a3a">👀</text>
   </g>
 
-  <!-- sticky note 3 (blue), small -->
+  <!-- note 3 (blue), small -->
   <g filter="url(#cardShadow)" transform="rotate(-6 690 470)">
     <rect x="630" y="420" width="150" height="100" rx="6" fill="#c9f0ff"/>
   </g>

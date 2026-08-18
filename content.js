@@ -1,6 +1,6 @@
 (() => {
-  if (window.__stickyNotesInjected) return;
-  window.__stickyNotesInjected = true;
+  if (window.__pagePinInjected) return;
+  window.__pagePinInjected = true;
 
   const Core = globalThis.STNCore;
   const SAVE_DEBOUNCE_MS = 250;
@@ -8,7 +8,7 @@
   const CONTEXT_POS_TTL_MS = 5000;
   const NAV_POLL_MS = 700;
   const TOAST_MS = 2600;
-  const HOST_ID = "sticky-notes-for-web";
+  const HOST_ID = "pagepin-root";
 
   let notes = [];
   let enabled = true;
@@ -39,7 +39,7 @@
       const data = await chrome.storage.local.get(sKey);
       return Core.sanitizeNotes(data[sKey]);
     } catch (error) {
-      console.warn("[Sticky Notes] load failed", error);
+      console.warn("[PagePin] load failed", error);
       return [];
     }
   }
@@ -51,7 +51,7 @@
         if (serialized.length) await chrome.storage.local.set({ [sKey]: serialized });
         else await chrome.storage.local.remove(sKey);
       } catch (error) {
-        console.warn("[Sticky Notes] save failed", error);
+        console.warn("[PagePin] save failed", error);
         showToast(t("errorSaveFailed"));
       }
     };
@@ -636,7 +636,7 @@
       const data = await chrome.storage.local.get(["enabled"]);
       enabled = data.enabled !== false;
     } catch (error) {
-      console.warn("[Sticky Notes] settings unavailable", error);
+      console.warn("[PagePin] settings unavailable", error);
     }
     notes = await readNotes(pageKey);
     Core.normalizeZ(notes);

@@ -13,7 +13,7 @@ function createMenu() {
       },
       () => {
         if (chrome.runtime.lastError) {
-          console.warn("[Sticky Notes] menu setup failed", chrome.runtime.lastError.message);
+          console.warn("[PagePin] menu setup failed", chrome.runtime.lastError.message);
         }
       }
     );
@@ -25,7 +25,7 @@ async function initDefaults() {
     const data = await chrome.storage.local.get("enabled");
     if (data.enabled === undefined) await chrome.storage.local.set({ enabled: true });
   } catch (error) {
-    console.warn("[Sticky Notes] could not initialise settings", error);
+    console.warn("[PagePin] could not initialise settings", error);
   }
 }
 
