@@ -1,2 +1,6 @@
 node_modules/
 *.zip
+
+# Local-only product backlog and agent handoff notes. Deliberately untracked:
+# these are working notes, not part of the shipped extension.
+handoff/
