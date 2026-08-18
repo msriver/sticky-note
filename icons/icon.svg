@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <title>PagePin</title>
+
+  <!-- brand plate -->
+  <rect x="4" y="4" width="120" height="120" rx="27" fill="#FFC93C"/>
+
+  <!-- note, centred, with the bottom-right corner turned up -->
+  <path d="M34 36 h60 a7 7 0 0 1 7 7 v39 l-19 19 h-48 a7 7 0 0 1 -7 -7 v-51 a7 7 0 0 1 7 -7 z"
+        fill="#FFFDF6" stroke="#D9970E" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M101 82 l-19 19 v-12 a7 7 0 0 1 7 -7 z"
+        fill="#EFD79B" stroke="#D9970E" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- thumbtack: cap, collar, needle -->
+  <path d="M64 56 l-3.5 -14 h7 z" fill="#2F2F2F"/>
+  <rect x="56" y="32" width="16" height="10" rx="3" fill="#2F2F2F"/>
+  <rect x="46" y="17" width="36" height="17" rx="8.5" fill="#3D3D3D"/>
+  <rect x="51" y="21" width="11" height="5" rx="2.5" fill="#6E6E6E"/>
+</svg>
