@@ -5,65 +5,90 @@ const clearBtn = document.getElementById("clearBtn");
 
 let activeTab = null;
 
-function isSupportedUrl(url) {
-  return /^https?:\/\//.test(url || "") || /^file:\/\//.test(url || "");
+const t = (key, subs) => chrome.i18n.getMessage(key, subs) || key;
+
+function applyI18n() {
+  document.documentElement.lang = chrome.i18n.getUILanguage();
+  for (const el of document.querySelectorAll("[data-i18n]")) {
+    el.textContent = t(el.dataset.i18n);
+  }
 }
 
 async function getActiveTab() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  return tab;
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    return tab || null;
+  } catch {
+    return null;
+  }
 }
 
+function setUnavailable(message) {
+  statusEl.textContent = message;
+  addBtn.disabled = true;
+  clearBtn.disabled = true;
+}
+
+/**
+ * Availability is decided by whether the content script answers, not by reading
+ * tab.url. That keeps the extension free of the "tabs"/"activeTab" permission.
+ */
 async function refreshStatus() {
-  const data = await chrome.storage.local.get(["enabled"]);
-  const enabled = data.enabled !== false;
+  let enabled = true;
+  try {
+    const data = await chrome.storage.local.get(["enabled"]);
+    enabled = data.enabled !== false;
+  } catch {
+    /* fall back to enabled */
+  }
   toggle.checked = enabled;
 
   activeTab = await getActiveTab();
-
-  if (!activeTab || !isSupportedUrl(activeTab.url)) {
-    statusEl.textContent = "이 페이지에서는 사용할 수 없어요.";
-    addBtn.disabled = true;
-    clearBtn.disabled = true;
+  if (!activeTab || activeTab.id == null) {
+    setUnavailable(t("statusUnsupported"));
     return;
   }
 
   try {
     const res = await chrome.tabs.sendMessage(activeTab.id, { type: "STN_GET_COUNT" });
-    if (res && res.ok) {
-      statusEl.textContent = enabled ? `이 페이지의 메모: ${res.count}개` : "메모가 꺼져 있어요.";
-    }
+    if (!res || !res.ok) throw new Error("no response");
+    statusEl.textContent = enabled ? t("statusCount", [String(res.count)]) : t("statusDisabled");
+    addBtn.disabled = !enabled;
+    clearBtn.disabled = !enabled || res.count === 0;
   } catch {
-    statusEl.textContent = "페이지를 새로고침하면 사용할 수 있어요.";
+    setUnavailable(t("statusReload"));
   }
+}
 
-  addBtn.disabled = !enabled;
-  clearBtn.disabled = !enabled;
+async function send(type) {
+  if (!activeTab || activeTab.id == null) return null;
+  try {
+    return await chrome.tabs.sendMessage(activeTab.id, { type });
+  } catch {
+    statusEl.textContent = t("statusRetry");
+    return null;
+  }
 }
 
 toggle.addEventListener("change", async () => {
-  await chrome.storage.local.set({ enabled: toggle.checked });
+  try {
+    await chrome.storage.local.set({ enabled: toggle.checked });
+  } catch {
+    /* refreshStatus re-reads the real value below */
+  }
   await refreshStatus();
 });
 
 addBtn.addEventListener("click", async () => {
-  if (!activeTab) return;
-  try {
-    await chrome.tabs.sendMessage(activeTab.id, { type: "STN_ADD_NOTE" });
-    window.close();
-  } catch {
-    statusEl.textContent = "페이지를 새로고침한 뒤 다시 시도해주세요.";
-  }
+  const res = await send("STN_ADD_NOTE");
+  if (res && res.ok) window.close();
+  else if (res) statusEl.textContent = t("statusDisabled");
 });
 
 clearBtn.addEventListener("click", async () => {
-  if (!activeTab) return;
-  try {
-    await chrome.tabs.sendMessage(activeTab.id, { type: "STN_CLEAR_PAGE" });
-    await refreshStatus();
-  } catch {
-    statusEl.textContent = "페이지를 새로고침한 뒤 다시 시도해주세요.";
-  }
+  const res = await send("STN_CLEAR_PAGE");
+  if (res) await refreshStatus();
 });
 
+applyI18n();
 refreshStatus();

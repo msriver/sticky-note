@@ -1,0 +1,84 @@
+{
+  "extName": {
+    "message": "Sticky Notes for Web",
+    "description": "Extension name shown in Chrome and the Web Store."
+  },
+  "extDescription": {
+    "message": "Stick post-it notes onto any web page and find them waiting for you when you come back.",
+    "description": "Extension description."
+  },
+  "actionTitle": {
+    "message": "Sticky Notes",
+    "description": "Toolbar button tooltip."
+  },
+  "menuAddNote": {
+    "message": "Add a sticky note here",
+    "description": "Right-click context menu entry."
+  },
+  "popupEnable": {
+    "message": "Enable sticky notes",
+    "description": "Label next to the on/off switch in the popup."
+  },
+  "popupAdd": {
+    "message": "+ Add a note to this page",
+    "description": "Popup button that creates a note."
+  },
+  "popupClear": {
+    "message": "Delete every note on this page",
+    "description": "Popup button that clears the current page."
+  },
+  "popupHint": {
+    "message": "You can also right-click anywhere on a page and choose \"Add a sticky note here\".",
+    "description": "Hint text at the bottom of the popup."
+  },
+  "statusCount": {
+    "message": "Notes on this page: $COUNT$",
+    "description": "Popup status line showing how many notes the page has.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "statusDisabled": {
+    "message": "Notes are turned off.",
+    "description": "Shown when the extension is switched off."
+  },
+  "statusUnsupported": {
+    "message": "Notes cannot be used on this page.",
+    "description": "Shown for pages where content scripts never run."
+  },
+  "statusReload": {
+    "message": "Reload the page to start using notes here.",
+    "description": "Shown when the content script has not been injected yet."
+  },
+  "statusRetry": {
+    "message": "Reload the page and try again.",
+    "description": "Shown when an action could not reach the page."
+  },
+  "notePlaceholder": {
+    "message": "Write a note...",
+    "description": "Placeholder inside an empty note."
+  },
+  "noteColor": {
+    "message": "Change colour",
+    "description": "Tooltip for the colour dots."
+  },
+  "noteDelete": {
+    "message": "Delete note",
+    "description": "Tooltip for the note's close button."
+  },
+  "noteDrag": {
+    "message": "Drag to move",
+    "description": "Tooltip for the note header."
+  },
+  "noteResize": {
+    "message": "Drag to resize",
+    "description": "Tooltip for the resize corner."
+  },
+  "errorSaveFailed": {
+    "message": "Could not save the note. Storage may be full.",
+    "description": "Toast shown when writing to chrome.storage fails."
+  }
+}

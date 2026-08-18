@@ -1,0 +1,84 @@
+{
+  "extName": {
+    "message": "Sticky Notes for Web",
+    "description": "Extension name shown in Chrome and the Web Store."
+  },
+  "extDescription": {
+    "message": "웹 페이지 위에 포스트잇 메모를 붙이고, 다시 방문했을 때 그대로 볼 수 있는 확장 프로그램",
+    "description": "Extension description."
+  },
+  "actionTitle": {
+    "message": "스티키 노트",
+    "description": "Toolbar button tooltip."
+  },
+  "menuAddNote": {
+    "message": "여기에 스티키 노트 추가",
+    "description": "Right-click context menu entry."
+  },
+  "popupEnable": {
+    "message": "스티키 노트 사용",
+    "description": "Label next to the on/off switch in the popup."
+  },
+  "popupAdd": {
+    "message": "+ 이 페이지에 메모 추가",
+    "description": "Popup button that creates a note."
+  },
+  "popupClear": {
+    "message": "이 페이지 메모 모두 삭제",
+    "description": "Popup button that clears the current page."
+  },
+  "popupHint": {
+    "message": "페이지에서 마우스 오른쪽 버튼을 클릭한 후 \"여기에 스티키 노트 추가\"를 선택해도 메모를 추가할 수 있어요.",
+    "description": "Hint text at the bottom of the popup."
+  },
+  "statusCount": {
+    "message": "이 페이지의 메모: $COUNT$개",
+    "description": "Popup status line showing how many notes the page has.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "statusDisabled": {
+    "message": "메모가 꺼져 있어요.",
+    "description": "Shown when the extension is switched off."
+  },
+  "statusUnsupported": {
+    "message": "이 페이지에서는 사용할 수 없어요.",
+    "description": "Shown for pages where content scripts never run."
+  },
+  "statusReload": {
+    "message": "페이지를 새로고침하면 사용할 수 있어요.",
+    "description": "Shown when the content script has not been injected yet."
+  },
+  "statusRetry": {
+    "message": "페이지를 새로고침한 뒤 다시 시도해주세요.",
+    "description": "Shown when an action could not reach the page."
+  },
+  "notePlaceholder": {
+    "message": "메모를 입력하세요...",
+    "description": "Placeholder inside an empty note."
+  },
+  "noteColor": {
+    "message": "색상 변경",
+    "description": "Tooltip for the colour dots."
+  },
+  "noteDelete": {
+    "message": "메모 삭제",
+    "description": "Tooltip for the note's close button."
+  },
+  "noteDrag": {
+    "message": "드래그해서 이동",
+    "description": "Tooltip for the note header."
+  },
+  "noteResize": {
+    "message": "드래그해서 크기 조절",
+    "description": "Tooltip for the resize corner."
+  },
+  "errorSaveFailed": {
+    "message": "메모를 저장하지 못했어요. 저장 공간이 가득 찼을 수 있습니다.",
+    "description": "Toast shown when writing to chrome.storage fails."
+  }
+}
