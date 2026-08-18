@@ -1,0 +1,11 @@
+{
+  "name": "sticky-notes-for-web",
+  "version": "1.1.0",
+  "description": "Chrome extension that sticks post-it notes onto web pages.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test",
+    "check": "node -e \"for (const f of require('fs').readdirSync('.').filter(f=>f.endsWith('.js'))) require('child_process').execFileSync(process.execPath,['--check',f],{stdio:'inherit'});\""
+  }
+}

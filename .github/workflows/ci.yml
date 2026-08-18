@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # No dependencies to install: the extension has no build step and the
+      # test suite runs on node:test alone.
+      - name: Syntax check every script
+        run: for f in *.js test/*.js; do node --check "$f"; done
+
+      - name: Validate JSON
+        run: |
+          for f in manifest.json package.json _locales/*/messages.json; do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || exit 1
+          done
+
+      - name: Unit tests
+        run: node --test

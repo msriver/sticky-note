@@ -1,16 +1,35 @@
+/**
+ * Note styles. They live in a JS string because everything is rendered inside a
+ * closed-off shadow root, which a manifest `css` entry cannot reach. Keeping the
+ * rules here also means no web_accessible_resources and no unstyled flash.
+ */
+globalThis.STN_STYLES = `
+:host {
+  all: initial;
+}
+
+.stn-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+}
+
 .stn-note {
   position: absolute;
+  box-sizing: border-box;
   min-width: 140px;
   min-height: 110px;
-  box-sizing: border-box;
   background: #fff6a9;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
-  z-index: 2147483000;
   display: flex;
   flex-direction: column;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #3a3a3a;
+  pointer-events: auto;
+  touch-action: none;
 }
 
 .stn-note.stn-dragging,
@@ -27,6 +46,7 @@
   cursor: grab;
   user-select: none;
   flex-shrink: 0;
+  touch-action: none;
 }
 
 .stn-header:active {
@@ -46,6 +66,8 @@
   border: 1px solid rgba(0, 0, 0, 0.15);
   cursor: pointer;
   padding: 0;
+  margin: 0;
+  appearance: none;
 }
 
 .stn-color-dot.stn-active {
@@ -53,14 +75,22 @@
   outline-offset: 1px;
 }
 
+.stn-color-dot:focus-visible,
+.stn-delete:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 1px;
+}
+
 .stn-delete {
   border: none;
   background: transparent;
   color: rgba(0, 0, 0, 0.45);
+  font: inherit;
   font-size: 16px;
   line-height: 1;
   cursor: pointer;
   padding: 2px 4px;
+  margin: 0;
   border-radius: 3px;
 }
 
@@ -74,11 +104,13 @@
   padding: 4px 10px 10px 10px;
   outline: none;
   overflow-y: auto;
+  overflow-wrap: break-word;
   font-size: 14px;
   line-height: 1.4;
   white-space: pre-wrap;
   word-break: break-word;
   cursor: text;
+  -webkit-user-modify: read-write-plaintext-only;
 }
 
 .stn-body:empty::before {
@@ -94,6 +126,7 @@
   height: 14px;
   cursor: nwse-resize;
   opacity: 0.5;
+  touch-action: none;
 }
 
 .stn-resize-handle::before {
@@ -106,3 +139,24 @@
   border-right: 2px solid rgba(0, 0, 0, 0.4);
   border-bottom: 2px solid rgba(0, 0, 0, 0.4);
 }
+
+.stn-toast {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  max-width: 280px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: rgba(32, 33, 36, 0.94);
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.stn-toast[hidden] {
+  display: none;
+}
+`;

@@ -1,15 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "Sticky Notes for Web",
-  "version": "1.0.0",
-  "description": "웹 페이지 위에 포스트잇 메모를 붙이고, 다시 방문했을 때 그대로 볼 수 있는 확장 프로그램",
-  "permissions": ["storage", "activeTab", "contextMenus"],
-  "host_permissions": ["<all_urls>"],
+  "name": "__MSG_extName__",
+  "version": "1.1.0",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
+  "minimum_chrome_version": "102",
+  "permissions": ["storage", "contextMenus"],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Sticky Notes",
+    "default_title": "__MSG_actionTitle__",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -25,8 +26,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "css": ["content.css"],
+      "js": ["stn-core.js", "styles.js", "content.js"],
       "run_at": "document_idle",
       "all_frames": false
     }

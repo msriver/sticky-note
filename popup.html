@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>Sticky Notes</title>
@@ -8,21 +8,19 @@
   <body>
     <div class="stn-popup">
       <div class="stn-row stn-toggle-row">
-        <span class="stn-title">스티키 노트 사용</span>
+        <span class="stn-title" data-i18n="popupEnable"></span>
         <label class="stn-switch">
           <input type="checkbox" id="enabledToggle" />
           <span class="stn-slider"></span>
         </label>
       </div>
 
-      <div class="stn-status" id="status"></div>
+      <div class="stn-status" id="status" role="status" aria-live="polite"></div>
 
-      <button class="stn-btn stn-btn-primary" id="addBtn">+ 이 페이지에 메모 추가</button>
-      <button class="stn-btn" id="clearBtn">이 페이지 메모 모두 삭제</button>
+      <button class="stn-btn stn-btn-primary" id="addBtn" data-i18n="popupAdd"></button>
+      <button class="stn-btn" id="clearBtn" data-i18n="popupClear"></button>
 
-      <p class="stn-hint">
-        페이지에서 마우스 오른쪽 버튼을 클릭한 후 "여기에 스티키 노트 추가"를 선택해도 메모를 추가할 수 있어요.
-      </p>
+      <p class="stn-hint" data-i18n="popupHint"></p>
     </div>
     <script src="popup.js"></script>
   </body>
