@@ -12,7 +12,7 @@
   </g>
 
   <!-- toggle row -->
-  <text x="150" y="80" font-family="'Segoe UI', 'Apple SD Gothic Neo', sans-serif" font-size="16" font-weight="700" fill="#2c2c2c">스티키 노트 사용</text>
+  <text x="150" y="80" font-family="'Segoe UI', 'Apple SD Gothic Neo', sans-serif" font-size="16" font-weight="700" fill="#2c2c2c">PagePin 사용</text>
   <rect x="330" y="65" width="38" height="22" rx="11" fill="#f7b500"/>
   <circle cx="352" cy="76" r="8" fill="#ffffff"/>
 
@@ -30,7 +30,7 @@
   <!-- hint -->
   <text x="150" y="246" font-family="'Segoe UI', sans-serif" font-size="11" fill="#8a8a8a">
     <tspan x="150" dy="0">페이지에서 마우스 오른쪽 버튼을 클릭한 후</tspan>
-    <tspan x="150" dy="16">"여기에 스티키 노트 추가"를 선택해도</tspan>
+    <tspan x="150" dy="16">"여기에 메모 추가"를 선택해도</tspan>
     <tspan x="150" dy="16">메모를 추가할 수 있어요.</tspan>
   </text>
 </svg>

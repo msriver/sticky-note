@@ -1,6 +1,6 @@
 {
   "extName": {
-    "message": "Sticky Notes for Web",
+    "message": "PagePin",
     "description": "Extension name shown in Chrome and the Web Store."
   },
   "extDescription": {
@@ -8,15 +8,15 @@
     "description": "Extension description."
   },
   "actionTitle": {
-    "message": "스티키 노트",
+    "message": "PagePin",
     "description": "Toolbar button tooltip."
   },
   "menuAddNote": {
-    "message": "여기에 스티키 노트 추가",
+    "message": "여기에 메모 추가",
     "description": "Right-click context menu entry."
   },
   "popupEnable": {
-    "message": "스티키 노트 사용",
+    "message": "PagePin 사용",
     "description": "Label next to the on/off switch in the popup."
   },
   "popupAdd": {
@@ -28,7 +28,7 @@
     "description": "Popup button that clears the current page."
   },
   "popupHint": {
-    "message": "페이지에서 마우스 오른쪽 버튼을 클릭한 후 \"여기에 스티키 노트 추가\"를 선택해도 메모를 추가할 수 있어요.",
+    "message": "페이지에서 마우스 오른쪽 버튼을 클릭한 후 \"여기에 메모 추가\"를 선택해도 메모를 추가할 수 있어요.",
     "description": "Hint text at the bottom of the popup."
   },
   "statusCount": {
