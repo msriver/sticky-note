@@ -4,17 +4,23 @@
 
   const Core = globalThis.STNCore;
   const SAVE_DEBOUNCE_MS = 250;
+  const SAVE_MAX_WAIT_MS = 1000;
   const CONTEXT_POS_TTL_MS = 5000;
   const NAV_POLL_MS = 700;
   const TOAST_MS = 2600;
+  const HOST_ID = "sticky-notes-for-web";
 
   let notes = [];
   let enabled = true;
   let pageKey = Core.pageKeyFromUrl(location.href);
+  let lastHref = location.href;
   let lastContext = null;
   let pending = null;
+  let pendingSince = 0;
   let saveTimer = null;
   let writeChain = Promise.resolve();
+  let writeSeq = 0;
+  let deferredRemote = null;
   let interactions = 0;
   let navToken = 0;
   let host = null;
@@ -57,10 +63,22 @@
     return writeChain;
   }
 
-  // Snapshots both the key and the notes, so a mid-flight SPA navigation cannot
-  // write this page's notes under the next page's key.
+  /**
+   * Snapshots both the key and the notes, so a mid-flight SPA navigation cannot
+   * write this page's notes under the next page's key.
+   *
+   * Debounced, but with a hard ceiling: continuous typing still reaches storage
+   * once a second. The pagehide/visibilitychange flushes are best-effort only --
+   * storage writes are async IPC and the frame can be gone before they land --
+   * so the ceiling, not the unload hook, is what actually bounds data loss.
+   */
   function scheduleSave() {
     pending = { key: pageKey, list: notes.map(Core.serializeNote) };
+    if (!pendingSince) pendingSince = Date.now();
+    if (Date.now() - pendingSince >= SAVE_MAX_WAIT_MS) {
+      flushSave();
+      return;
+    }
     clearTimeout(saveTimer);
     saveTimer = setTimeout(flushSave, SAVE_DEBOUNCE_MS);
   }
@@ -68,9 +86,11 @@
   function flushSave() {
     clearTimeout(saveTimer);
     saveTimer = null;
+    pendingSince = 0;
     if (!pending) return;
     const snapshot = pending;
     pending = null;
+    writeSeq += 1;
     writeNotes(snapshot.key, snapshot.list);
   }
 
@@ -84,8 +104,14 @@
   function ensureHost() {
     if (host && host.isConnected) return false;
 
+    // Our tracked reference and the DOM can drift apart -- a page script may
+    // drop the host, or an earlier host may outlive the variable pointing at it.
+    // Sweeping first makes a second layer impossible: a stale twin would make
+    // getElementById ambiguous and strand notes inside an orphaned shadow root.
+    for (const stale of document.querySelectorAll("#" + HOST_ID)) stale.remove();
+
     host = document.createElement("div");
-    host.id = "sticky-notes-for-web";
+    host.id = HOST_ID;
     // Inline !important so no page rule (div { position: relative }, * { display: none }, ...)
     // can move or hide the layer. Everything inside is shadowed and therefore untouchable.
     const hostStyle = {
@@ -255,7 +281,10 @@
     body.addEventListener("focus", () => {
       if (bringToFront(note)) scheduleSave();
     });
-    body.addEventListener("blur", flushSave);
+    body.addEventListener("blur", () => {
+      flushSave();
+      setTimeout(applyDeferredRemote, 0);
+    });
 
     const resizeHandle = document.createElement("div");
     resizeHandle.className = "stn-resize-handle";
@@ -397,6 +426,25 @@
 
   function endInteraction() {
     interactions = Math.max(0, interactions - 1);
+    // Runs after the caller's own scheduleSave(), so writeSeq/pending below
+    // already reflect this interaction.
+    if (interactions === 0) setTimeout(applyDeferredRemote, 0);
+  }
+
+  /**
+   * Applies a storage change that arrived mid-interaction, but only when we
+   * have not written since. If we have, our state is the newer one and our own
+   * write is already on its way to the other tab.
+   */
+  function applyDeferredRemote() {
+    const deferred = deferredRemote;
+    deferredRemote = null;
+    if (!deferred || isBusy()) return;
+    if (deferred.seq !== writeSeq || pending) return;
+    if (Core.sameNotes(deferred.list, notes)) return;
+    notes = deferred.list;
+    Core.normalizeZ(notes);
+    renderAll();
   }
 
   function isBusy() {
@@ -415,6 +463,10 @@
 
   /** Fills the layer. Assumes the host exists. */
   function renderNotes() {
+    // Every note element is about to be destroyed, so any drag in flight is
+    // over whether or not its pointerup still reaches the detached handle.
+    // Without this reset isBusy() could latch on and silently freeze sync.
+    interactions = 0;
     layer.replaceChildren();
     if (!enabled) return;
     Core.normalizeZ(notes);
@@ -438,10 +490,14 @@
       bounds
     );
 
+    // Repair the layer *before* the note joins the array. The other way round,
+    // a rebuild here would render the new note and the append below would add a
+    // second element for the same id.
+    ensureRendered();
+
     const note = Core.createNote({ x: spot.x, y: spot.y, z: Core.maxZ(notes) + 1 });
     notes.push(note);
     Core.normalizeZ(notes);
-    ensureRendered();
     const el = createNoteElement(note);
     layer.appendChild(el);
     applyZ();
@@ -452,7 +508,16 @@
   // ------------------------------------------------------------- navigation
 
   async function handleNavigation() {
-    const nextKey = Core.pageKeyFromUrl(location.href);
+    // Fast path for the poll: a string compare, so the common "nothing moved"
+    // tick costs no URL parsing.
+    const href = location.href;
+    if (href === lastHref) {
+      ensureRendered();
+      return;
+    }
+    lastHref = href;
+
+    const nextKey = Core.pageKeyFromUrl(href);
     if (nextKey === pageKey) {
       ensureRendered();
       return;
@@ -552,8 +617,13 @@
     if (!Object.prototype.hasOwnProperty.call(changes, sKey)) return;
 
     const incoming = Core.sanitizeNotes(changes[sKey].newValue);
-    // Our own write, or a change that arrived mid-edit (our next save wins).
-    if (Core.sameNotes(incoming, notes) || isBusy()) return;
+    if (Core.sameNotes(incoming, notes)) return;
+    if (isBusy()) {
+      // Park it rather than dropping it: applyDeferredRemote() decides once the
+      // drag or edit finishes.
+      deferredRemote = { list: incoming, seq: writeSeq };
+      return;
+    }
     notes = incoming;
     Core.normalizeZ(notes);
     renderAll();
